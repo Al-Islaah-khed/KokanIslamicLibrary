@@ -71,6 +71,40 @@ pip install -r requirements.txt
 
 This command will install all the necessary Python packages listed in the `requirements.txt` file.
 
+##### Configure Environment Variables
+
+create a `.env` file in the `server` directory. This file contains important configuration settings for the backend application.
+
+**It's essential to customize these values according to your specific setup.**
+
+Open the `.env` file and modify the following variables:
+
+* `DATABASE_URL`: This specifies the connection string for your PostgreSQL database.
+    * `postgresql://<username>:<password>@<host>:<port>/<database_name>`
+    * **Replace:**
+        * `<username>` with your PostgreSQL username (you likely set this during installation).
+        * `<password>` with your PostgreSQL password.
+        * `<host>` with the address of your PostgreSQL server (usually `localhost` if it's running on your local machine).
+        * `<port>` with the port your PostgreSQL server is listening on (the default is `5432`).
+        * `<database_name>` with the name of the database you want to use for the library management system (e.g., `kokan_library`). You might need to create this database in PostgreSQL if it doesn't exist yet.
+
+* `SECRET_KEY`: This is a secret key used for signing JSON Web Tokens (JWT) for authentication. **It's crucial to keep this key secure and generate a strong, unique value for production environments.** The provided value is a placeholder; consider using a more robust method to generate a secure key.
+
+* `JWT_ALGORITHM`: This specifies the algorithm used for signing JWTs. `HS256` is a common and secure choice. You likely won't need to change this unless you have specific security requirements.
+
+* `ACCESS_TOKEN_EXPIRE_MINUTES`: This determines how long (in minutes) an access token will be valid before it expires. You can adjust this value based on your application's security and usability needs.
+
+**Example `.env` file with customized values:**
+
+```
+DATABASE_URL=postgresql://myuser:mypassword@localhost:5432/library_db
+SECRET_KEY=aVeryLongAndSecureRandomString1234567890abcdef
+JWT_ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=60
+```
+
+**Important:** After modifying the `.env` file, ensure you save the changes. The backend application will typically load these environment variables when it starts.
+
 #### 2. Frontend Setup
 
 ```bash
@@ -94,6 +128,7 @@ Once you have completed the setup, you can start the backend and frontend server
 ```bash
 cd ../server
 venv/Scripts/activate
+cd app
 fastapi dev main.py
 ```
 
