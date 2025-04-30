@@ -1,0 +1,40 @@
+# Ignore Python/FastAPI files inside Server/
+Server/__pycache__/
+Server/*.py[cod]
+Server/env/
+Server/venv/
+Server/.pytest_cache/
+Server/.mypy_cache/
+Server/.coverage
+Server/htmlcov/
+Server/.env
+Server/*.log
+Server/*.sqlite3
+Server/*.db
+Server/instance/
+Server/*.egg-info/
+Server/build/
+Server/dist/
+Server/.vscode/
+
+# Node (React or Next.js frontend) in Client/
+Client/node_modules/
+Client/.next/
+Client/out/
+Client/.env.local
+Client/.env.development.local
+Client/.env.test.local
+Client/.env.production.local
+Client/npm-debug.log*
+Client/yarn-debug.log*
+Client/yarn-error.log*
+Client/package-lock.json
+Client/yarn.lock
+Client/pnpm-lock.yaml
+Client/bun.lockb
+
+# macOS system files
+.DS_Store
+
+# Windows system files
+Thumbs.db

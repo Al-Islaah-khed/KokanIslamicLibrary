@@ -1,0 +1,34 @@
+# Byte-compiled / compiled files
+
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+venv/
+
+# Environment variables
+.env
+
+# IDE/editor config
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Testing
+.coverage
+htmlcov/
+.tox/
+.pytest_cache/
+
+# MyPy / Type checking
+.mypy_cache/
+
+# Other
+*.sqlite3
