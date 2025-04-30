@@ -16,7 +16,7 @@ class User(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     fullname = Column(String(100), nullable=False)
     email = Column(String(100), nullable=False, unique=True)
-    password = Column(String(255), nullable=False,exclude=True)
+    password = Column(String(255), nullable=False)
     is_admin = Column(Boolean, nullable=False, default=False)
     is_active = Column(Boolean, nullable=False, default=True)
     created_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now())

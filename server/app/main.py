@@ -19,4 +19,5 @@ from models.language import Language
 app = FastAPI(title="Library Management System")
 
 create_tables()
+
 app.include_router(AdminAuthRouter,prefix="/auth/admin")
