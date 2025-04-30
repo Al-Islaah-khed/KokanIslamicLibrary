@@ -31,6 +31,13 @@ KokanIslamicLibrary/
 
 Follow the steps below to set up both the backend and frontend components.
 
+
+#### Clone the repository
+
+```bash
+git clone https://github.com/Al-Islaah-khed/KokanIslamicLibrary
+```
+
 #### 1. Backend Setup
 
 ```bash
