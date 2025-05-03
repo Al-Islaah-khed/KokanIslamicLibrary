@@ -16,6 +16,9 @@ Server/*.egg-info/
 Server/build/
 Server/dist/
 Server/.vscode/
+Server/alembic/versions/__pycache__/
+Server/alembic/versions/*.pyc
+
 
 # Node (React or Next.js frontend) in Client/
 Client/node_modules/

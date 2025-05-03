@@ -105,6 +105,24 @@ ACCESS_TOKEN_EXPIRE_MINUTES=60
 
 **Important:** After modifying the `.env` file, ensure you save the changes. The backend application will typically load these environment variables when it starts.
 
+#### Database setup
+
+1. create database
+
+```
+CREATE DATABASE library_db
+```
+
+2. After running application, it will automatically create all tables then insert following values in the `roles` table.
+
+```sql
+INSERT INTO roles (name, description) VALUES
+('super_admin', 'Full access to all system functionalities'),
+('librarian', 'Manages books, users, and issues/returns'),
+('auditor', 'Can view logs and reports only'),
+('admin_staff', 'Manages user accounts and approvals');
+```
+
 #### 2. Frontend Setup
 
 ```bash

@@ -1,13 +1,15 @@
 from pydantic_settings import BaseSettings
 from functools import lru_cache
-class Settings(BaseSettings):
-    DATABASE_URL: str
-    JWT_ALGORITHM: str
-    SECRET_KEY : str
-    ACCESS_TOKEN_EXPIRE_MINUTES : int
 
-    class Config:
-        env_file = "../.env"
+from dotenv import load_dotenv
+import os
+load_dotenv()
+
+class Settings(BaseSettings):
+    DATABASE_URL: str = os.getenv('DATABASE_URL')
+    JWT_ALGORITHM: str = os.getenv('JWT_ALGORITHM')
+    SECRET_KEY : str = os.getenv('SECRET_KEY')
+    ACCESS_TOKEN_EXPIRE_MINUTES : int = os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")
 
 @lru_cache()
 def get_settings():

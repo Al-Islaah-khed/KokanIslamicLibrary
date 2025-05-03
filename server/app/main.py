@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from routes.auth_routes import router as AdminAuthRouter
-from db.database import create_tables
+
 
 from models.role import Role
 from models.permission import Permission
@@ -17,7 +17,5 @@ from models.booklocation import BookLocation
 from models.language import Language
 
 app = FastAPI(title="Library Management System")
-
-create_tables()
 
 app.include_router(AdminAuthRouter,prefix="/auth/admin")
