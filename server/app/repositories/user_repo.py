@@ -2,7 +2,7 @@ from models.user import User
 from typing import Optional
 from sqlalchemy.orm import Session
 import schemas.user as UserSchema
-
+from models.role import Role
 class UserRepo():
 
     def get_user_by_id(db : Session, user_id: int) -> Optional[UserSchema.User]:
@@ -26,3 +26,15 @@ class UserRepo():
         db.commit()
         db.refresh(new_user)
         return new_user
+
+    def assign_role(db: Session,user: User,role: Role):
+        user.roles.append(role)
+        db.commit()
+        db.refresh(user)
+        return user
+
+    def remove_role(db:Session,user: User,role : Role):
+        user.roles.remove(role)
+        db.commit()
+        db.refresh(user)
+        return user

@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from routes.auth_routes import router as AdminAuthRouter
-
+from routes.admin.auth_routes import router as AdminAuthRouter
+from routes.admin.user_routes import router as AdminUserRouter
 
 from models.role import Role
 from models.permission import Permission
@@ -18,4 +18,6 @@ from models.language import Language
 
 app = FastAPI(title="Library Management System")
 
-app.include_router(AdminAuthRouter,prefix="/auth/admin")
+# admin routes
+app.include_router(AdminAuthRouter)
+app.include_router(AdminUserRouter)

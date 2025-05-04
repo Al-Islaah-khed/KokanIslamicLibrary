@@ -1,10 +1,17 @@
 from pydantic import BaseModel
 
-# --- Placeholder Schemas for Related Models ---
-# (Replace with actual schemas when defined)
-class RoleRead(BaseModel):
-    id: int
+class RoleBase(BaseModel):
     name: str
+    description : str
 
-    class Config:
-        orm_mode = True
+class Role(RoleBase):
+    id : int
+
+class AssignRole(BaseModel):
+    role_id: int
+
+class AssignResponse(BaseModel):
+    message : str
+
+class CreateRole(RoleBase):
+    pass

@@ -1,14 +1,12 @@
-from typing import Optional
 from sqlalchemy.orm import Session
-from fastapi import Depends, HTTPException, status,Request
+from fastapi import  HTTPException, status
 
 from repositories.user_repo import UserRepo
 from helpers.password_hash import get_password_hash,verify_password
-from models.user import User
-from db.database import get_db
-from helpers.token import verify_token,generate_token
+from helpers.token import generate_token
 import schemas.user as UserSchema
 from datetime import timedelta
+from helpers.logger import logger
 
 from config import Settings
 
@@ -18,30 +16,35 @@ settings = Settings()
 def authenticate_user(db: Session, email: str, password: str):
     user = UserRepo.get_user_by_email(db=db, email=email)
     if not user:
+        logger.warning(f"Authentication failed: user with email '{email}' not found")
         return None
     if not verify_password(password, user.password):
+        logger.warning(f"Authentication failed: incorrect password for user '{email}'")
         return None
+    logger.info(f"User '{email}' authenticated successfully")
     return user
 
 # Create User
 def create_user(db: Session, user: UserSchema.UserCreate):
     existing_user = UserRepo.get_user_by_email(db, user.email)
     if existing_user:
+        logger.warning(f"User creation failed: email '{user.email}' already registered")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Email already registered"
         )
 
     user.password = get_password_hash(user.password)
-
-    return UserRepo.create_user(db=db, user=user)
-
+    created_user =  UserRepo.create_user(db=db, user=user)
+    logger.info(f"User '{created_user.email}' created successfully with ID {created_user.id}")
+    return created_user
 
 # Login user
 def login_user(db:Session,user : UserSchema.UserLogin):
     found_user = authenticate_user(db,user.email,user.password)
 
     if not found_user:
+        logger.warning(f"Login failed for email '{user.email}'")
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="Incorrect email and password")
 
     token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -57,43 +60,5 @@ def login_user(db:Session,user : UserSchema.UserLogin):
         data["roles"] = [role.name for role in found_user.roles]
 
     token = generate_token(data=data,expires_delta=token_expires)
+    logger.info(f"User '{found_user.email}' logged in successfully")
     return UserSchema.UserLoginResponse(token=token,user=UserSchema.User(**data))
-
-
-# Get current user from database
-async def get_current_user(
-    request : Request,
-    db: Session = Depends(get_db),
-    payload: dict = Depends(verify_token),
-):
-
-    if hasattr(request.state, "user"):
-        return request.state.user
-
-    email = payload.get("email")
-    if not email:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token missing email information"
-        )
-
-    user = UserRepo.get_user_by_email(db, email)
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="User not found"
-        )
-
-    request.state.user = user
-    return user
-
-# Check if current user is active
-async def get_current_active_user(
-    current_user: User = Depends(get_current_user)
-):
-    if not current_user.is_active:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Inactive user"
-        )
-    return current_user

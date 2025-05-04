@@ -8,7 +8,10 @@ Server/.mypy_cache/
 Server/.coverage
 Server/htmlcov/
 Server/.env
+Server/app/logs/
+Server/logs
 Server/*.log
+Server/*.log.*
 Server/*.sqlite3
 Server/*.db
 Server/instance/
@@ -18,7 +21,6 @@ Server/dist/
 Server/.vscode/
 Server/alembic/versions/__pycache__/
 Server/alembic/versions/*.pyc
-
 
 # Node (React or Next.js frontend) in Client/
 Client/node_modules/
