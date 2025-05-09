@@ -1,13 +1,25 @@
-from pydantic import BaseModel, EmailStr, Field
-from typing import List, Optional
+from pydantic import BaseModel, ConfigDict, Field
+from typing import Optional
 from datetime import datetime
+from enums.TargetType import TargetType
+import schemas.user as UserSchema
+class AuditLogBase(BaseModel):
+    action_by: int
+    target_id: Optional[int] = None
+    target_type: Optional[TargetType] = None
+    description: str = Field(..., min_length=5)
+    ip_address: str = Field(..., min_length=7)  # e.g., "127.0.0.1"
+    user_agent: str = Field(..., min_length=3)
 
-class AuditLogRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+class AuditLogCreate(AuditLogBase):
+    pass  # All required fields already in base
+
+class AuditLog(AuditLogBase):
     id: int
-    action_by: Optional[int] # User ID or None
-    # other fields like action_type, timestamp, details...
-    timestamp: datetime # Example field
-    action_details: str # Example field
+    timestamp: datetime
+    user: Optional[UserSchema.Admin] = None
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
+

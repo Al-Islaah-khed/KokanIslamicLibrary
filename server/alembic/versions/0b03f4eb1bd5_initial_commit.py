@@ -1,8 +1,8 @@
-"""second commit
+"""initial commit
 
-Revision ID: 15ff3a3cfa27
-Revises: aae7635bd7fd
-Create Date: 2025-05-01 14:46:18.474117
+Revision ID: 0b03f4eb1bd5
+Revises: 
+Create Date: 2025-05-07 20:50:52.204070
 
 """
 from typing import Sequence, Union
@@ -12,8 +12,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '15ff3a3cfa27'
-down_revision: Union[str, None] = 'aae7635bd7fd'
+revision: str = '0b03f4eb1bd5'
+down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
@@ -57,7 +57,7 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('fullname', sa.String(length=100), nullable=False),
     sa.Column('email', sa.String(length=100), nullable=False),
-    sa.Column('passwords', sa.String(length=255), nullable=False),
+    sa.Column('password', sa.String(length=255), nullable=False),
     sa.Column('is_admin', sa.Boolean(), nullable=False),
     sa.Column('is_active', sa.Boolean(), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
@@ -68,11 +68,12 @@ def upgrade() -> None:
     op.create_table('audit_logs',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('action_by', sa.Integer(), nullable=False),
-    sa.Column('action_by_type', sa.Enum('CLIENT', 'ADMIN', name='actionbytype'), nullable=False),
-    sa.Column('target_id', sa.Integer(), nullable=False),
-    sa.Column('target_type', sa.Enum('BOOK', 'CLIENT', 'ADMIN', name='targettype'), nullable=False),
+    sa.Column('target_id', sa.Integer(), nullable=True),
+    sa.Column('target_type', sa.Enum('BOOK', 'CLIENT', 'ADMIN', name='targettype'), nullable=True),
     sa.Column('timestamp', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.Column('description', sa.Text(), nullable=False),
+    sa.Column('ip_address', sa.String(length=50), nullable=False),
+    sa.Column('user_agent', sa.String(length=100), nullable=False),
     sa.ForeignKeyConstraint(['action_by'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
     )

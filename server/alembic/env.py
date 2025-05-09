@@ -12,28 +12,13 @@ import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__),"../app")))
 
 # my imports
+import app.models
 
-from app.models.role import Role
-from app.models.permission import Permission
-from app.models.auditlog import AuditLog
-from app.models.digitalaccess import DigitalAccess
-from app.models.book import Book
-from app.models.issuedbook import IssuedBook
-from app.models.bookcopy import BookCopy
-from app.models.bookupload_request import BookUploadRequest
-from app.models.category import Category
-from app.models.subcategory import SubCategory
-from app.models.location import Location
-from app.models.booklocation import BookLocation
-from app.models.language import Language
-
-from app.db.database import Base
+from app.models import Base
 from app.config import Settings
 
 settings = Settings()
 DATABASE_URL = settings.DATABASE_URL
-
-
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -52,6 +37,9 @@ if config.config_file_name is not None:
 # target_metadata = mymodel.Base.metadata
 target_metadata = Base.metadata
 
+print("Tables detected in metadata:", list(target_metadata.tables.keys()))
+
+
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
@@ -59,6 +47,7 @@ target_metadata = Base.metadata
 
 
 def run_migrations_offline() -> None:
+
     """Run migrations in 'offline' mode.
 
     This configures the context with just a URL

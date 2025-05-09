@@ -1,33 +1,33 @@
 from fastapi import APIRouter,Depends
 from sqlalchemy.orm import Session
-import services.auth_service as AuthService
-import dependencies.auth_dep as AuthDependency
+import services.admin.auth_service as AuthService
+from dependencies.auth_dep import restrict_authenticated_users,get_admin
 from db.database import get_db
-from schemas.user import User,UserCreate,UserLogin,UserLoginResponse
+from schemas.user import Admin,AdminCreate,AdminLogin,AdminLoginResponse
 
 router = APIRouter(prefix="/admin/auth",tags=["Admin"])
 
 @router.post("/register",
-            response_model=User,
-            dependencies=[Depends(AuthDependency.restrict_authenticated_users)]
+            response_model=Admin,
+            dependencies=[Depends(restrict_authenticated_users)]
 
 )
-async def register(
-    user : UserCreate,
-    db : Session = Depends(get_db),
-):
-    return AuthService.create_user(db=db,user=user)
-
-@router.post("/login",
-    response_model=UserLoginResponse,
-    dependencies=[Depends(AuthDependency.restrict_authenticated_users)]
-)
-async def login(
-    user : UserLogin,
+async def register_admin(
+    user : AdminCreate,
     db: Session = Depends(get_db),
 ):
-    return AuthService.login_user(db=db,user=user)
+    return AuthService.register_admin(db=db,user=user)
 
-@router.post("/verify",response_model=User)
-async def verify_user(admin : User = Depends(AuthDependency.get_admin)):
+@router.post("/login",
+    response_model=AdminLoginResponse,
+    dependencies=[Depends(restrict_authenticated_users)]
+)
+async def login_admin(
+    user : AdminLogin,
+    db: Session = Depends(get_db),
+):
+    return AuthService.login_admin(db=db,user=user)
+
+@router.post("/verify",response_model=Admin)
+async def verify_admin(admin : Admin = Depends(get_admin)):
     return admin

@@ -11,4 +11,4 @@ class Role(Base):
     description = Column(Text,nullable=True)
 
     # Many-to-many relationship
-    users = relationship("User", secondary=user_roles, back_populates="roles")
+    users = relationship("User",secondary=user_roles,back_populates="roles",passive_deletes=True)

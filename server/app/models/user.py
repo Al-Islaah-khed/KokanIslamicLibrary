@@ -6,8 +6,8 @@ from db.database import Base
 user_roles = Table(
     "user_roles",
     Base.metadata,
-    Column("user_id", Integer, ForeignKey("users.id"), primary_key=True),
-    Column("role_id", Integer, ForeignKey("roles.id"), primary_key=True),
+    Column("user_id", Integer, ForeignKey("users.id", ondelete="CASCADE"), primary_key=True),
+    Column("role_id", Integer, ForeignKey("roles.id", ondelete="CASCADE"), primary_key=True),
 )
 
 class User(Base):
@@ -23,14 +23,14 @@ class User(Base):
     updated_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now())
 
     # Many-to-many relationship with roles
-    roles = relationship("Role", secondary=user_roles, back_populates="users")
+    roles = relationship("Role", secondary=user_roles, back_populates="users",passive_deletes=True)
 
     # Permissions granted to or by the user
     permissions_granted_to = relationship("Permission", foreign_keys="[Permission.granted_to]", back_populates="granted_to_user")
     permissions_granted_by = relationship("Permission", foreign_keys="[Permission.granted_by]", back_populates="granted_by_user")
 
     # Audit logs performed by the user (if admin)
-    action_performed = relationship("AuditLog", back_populates="user", foreign_keys="[AuditLog.action_by]")
+    action_performed = relationship("AuditLog", back_populates="user")
 
     # Digital Access Relationship
     digital_access = relationship("DigitalAccess", back_populates="user")
