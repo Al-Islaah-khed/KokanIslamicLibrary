@@ -18,11 +18,15 @@ router = APIRouter(
 @router.get("/",
     response_model=List[AuditLog]
 )
-def get_all_auditlogs(db:Session = Depends(get_db)):
+async def get_all_auditlogs(db:Session = Depends(get_db)):
     return AuditLogService.get_all_auditlogs(db=db)
 
-@router.get("/<log_id>",
+@router.get("/{log_id}",
     response_model=AuditLog
 )
-def get_specific_auditlog(log_id: int,db:Session = Depends(get_db)):
+async def get_specific_auditlog(log_id: int,db:Session = Depends(get_db)):
     return AuditLogService.get_specific_auditlog(db=db,log_id=log_id)
+
+@router.get("/user/{user_id}",response_model=List[AuditLog])
+async def get_specific_admin_auditlog(user_id:int,db:Session=Depends(get_db)):
+    return AuditLogService.get_specific_admin_auditlog(db=db,user_id=user_id)

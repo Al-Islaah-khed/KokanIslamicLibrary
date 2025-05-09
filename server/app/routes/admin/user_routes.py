@@ -21,7 +21,7 @@ router = APIRouter(prefix="/admin/users",
 # user's operations like crud related routes
 
 @router.post("/",response_model=UserSchema.Admin)
-def create_new_admin(
+async def create_new_admin(
     user : UserSchema.AdminCreate,
     db : Session = Depends(get_db),
     create_auditlog = Depends(AuditLogDependency.get_audit_logger)
@@ -29,7 +29,7 @@ def create_new_admin(
     return AdminUserService.create_admin(db=db,user=user,create_auditlog=create_auditlog)
 
 @router.get("/",response_model = List[UserSchema.Admin])
-def get_all_admin_users(
+async def get_all_admin_users(
     db : Session = Depends(get_db)
 ):
     return AdminUserService.get_all_admins(
@@ -37,7 +37,7 @@ def get_all_admin_users(
     )
 
 @router.get("/{user_id}",response_model=UserSchema.Admin)
-def get_specific_admin(
+async def get_specific_admin(
     user_id : int,
     db:Session = Depends(get_db),
 ):
@@ -47,7 +47,7 @@ def get_specific_admin(
     )
 
 @router.put("/{user_id}",response_model=UserSchema.Admin)
-def update_admin(
+async def update_admin(
     user_id:int,
     user_data :UserSchema.AdminUpdate,
     db : Session = Depends(get_db),
@@ -61,7 +61,7 @@ def update_admin(
     )
 
 @router.delete("/{user_id}" , response_model=APIResponse)
-def delete_admin(
+async def delete_admin(
     user_id : int,
     db : Session = Depends(get_db),
     create_auditlog = Depends(AuditLogDependency.get_audit_logger)
@@ -98,6 +98,5 @@ async def remove_role_from_user(
     role : RoleSchema.AssignRole,
     db : Session = Depends(get_db),
     create_auditlog = Depends(AuditLogDependency.get_audit_logger)
-
 ):
     return AdminUserService.remove_role_from_user(user_id,role,db,create_auditlog=create_auditlog)

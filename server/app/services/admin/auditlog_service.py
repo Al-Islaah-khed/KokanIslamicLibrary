@@ -3,6 +3,7 @@ import schemas.auditlog as AuditLogSchema
 from repositories.auditlog_repo import AuditLogRepo
 from fastapi import  HTTPException,status
 from helpers.converters import AuditLogModel_to_Schema
+from helpers.logger import logger
 
 def create_log(
         db: Session,
@@ -24,7 +25,10 @@ def create_log(
 
     try:
         created_log = AuditLogRepo.create_auditlog(db=db, auditlog=auditlog)
-    except:
+        logger.info(f"Audit log created successfully by user {action_by}")
+
+    except Exception as e:
+        logger.error(f"Error occurred while creating audit log by user {action_by}: {str(e)}")
         raise HTTPException(
             status=status.HTTP_400_BAD_REQUEST,
             details=f"Error occured while creating auditlog"
@@ -33,15 +37,53 @@ def create_log(
     return AuditLogModel_to_Schema(created_log)
 
 def get_all_auditlogs(db: Session):
-    logs =  AuditLogRepo.get_all_logs(db=db)
-    return [AuditLogModel_to_Schema(log) for log in logs]
-
-def get_specific_auditlog(db:Session,log_id):
-    log = AuditLogRepo.find_log_by_id(db=db,log_id=log_id)
-    if not log:
+    try:
+        logs =  AuditLogRepo.get_all_logs(db=db)
+        logger.info("Fetched all audit logs successfully.")
+        return [AuditLogModel_to_Schema(log) for log in logs]
+    except HTTPException:
+        logger.warning("HTTPException occurred while fetching all audit logs.")
+        raise
+    except Exception as e:
+        logger.error(f"Unexpected error occurred while fetching all audit logs: {str(e)}")
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Audit log with ID {log_id} not found"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An unexpected error occurred while fetching all auditlogs"
         )
 
-    return AuditLogModel_to_Schema(log)
+
+def get_specific_auditlog(db:Session,log_id : int):
+    try:
+        log = AuditLogRepo.find_log_by_id(db=db,log_id=log_id)
+        if not log:
+            logger.warning(f"Audit log with ID {log_id} not found.")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Audit log with ID {log_id} not found"
+            )
+
+        logger.info(f"Audit log with ID {log_id} fetched successfully.")
+        return AuditLogModel_to_Schema(log)
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Unexpected error occurred while fetching audit log ID {log_id}: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An unexpected error occurred while fetching specific auditlog"
+        )
+
+def get_specific_admin_auditlog(db:Session,user_id: int):
+    try:
+        logs = AuditLogRepo.find_log_by_user_id(db=db,user_id=user_id)
+
+        logger.info(f"Audit logs for admin user {user_id} fetched successfully.")
+        return [AuditLogModel_to_Schema(log) for log in logs]
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Unexpected error while fetching audit logs for admin user {user_id}: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An unexpected error occurred while fetching specific admin auditlogs"
+        )

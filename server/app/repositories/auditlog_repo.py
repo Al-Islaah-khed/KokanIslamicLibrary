@@ -25,3 +25,6 @@ class AuditLogRepo():
 
     def find_log_by_id(db: Session, log_id: int) -> Optional[AuditLog]:
         return db.query(AuditLog).filter(AuditLog.id == log_id).first()
+
+    def find_log_by_user_id(db:Session, user_id : int ) -> List[AuditLog]:
+        return db.query(AuditLog).filter(AuditLog.action_by == user_id).all()
