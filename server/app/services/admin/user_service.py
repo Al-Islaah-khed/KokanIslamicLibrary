@@ -44,13 +44,19 @@ def create_admin(db: Session, user: UserSchema.AdminCreate,create_auditlog):
             detail="An unexpected error occurred while creating the admin"
         )
 
-def delete_admin(db: Session, user_id: int,create_auditlog) -> APIResponse:
+def delete_admin(db: Session, user_id: int,create_auditlog,current_admin : UserSchema.Admin) -> APIResponse:
     try:
         existing_user = UserRepo.get_admin_user_by_id(db=db, user_id=user_id)
         if not existing_user:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Admin not found to delete"
+            )
+
+        if existing_user.id == current_admin.id:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Cannot delete current logged in account"
             )
 
         if Roles.SUPER_ADMIN.value in [role.name for role in existing_user.roles]:

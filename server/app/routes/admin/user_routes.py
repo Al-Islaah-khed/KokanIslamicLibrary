@@ -64,12 +64,14 @@ async def update_admin(
 async def delete_admin(
     user_id : int,
     db : Session = Depends(get_db),
-    create_auditlog = Depends(AuditLogDependency.get_audit_logger)
+    create_auditlog = Depends(AuditLogDependency.get_audit_logger),
+    current_admin : UserSchema.Admin = Depends(AuthDependency.get_admin)
 ):
     return AdminUserService.delete_admin(
         db=db,
         user_id=user_id,
-        create_auditlog=create_auditlog
+        create_auditlog=create_auditlog,
+        current_admin=current_admin
     )
 
 # user role related routes

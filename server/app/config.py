@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = os.getenv('JWT_ALGORITHM')
     SECRET_KEY : str = os.getenv('SECRET_KEY')
     ACCESS_TOKEN_EXPIRE_MINUTES : int = os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")
+    CLIENT_BASE_URL : str = os.getenv("CLIENT_BASE_URL")
 
 @lru_cache()
 def get_settings():
