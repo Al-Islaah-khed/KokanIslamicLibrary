@@ -3,9 +3,16 @@ from typing import Optional,List
 from sqlalchemy.orm import Session
 import schemas.user as UserSchema
 from models.role import Role
+from datetime import datetime
 class UserRepo():
 
     # user and admin both can find by these methods
+    def update_last_login(db : Session,user : User) -> User:
+        user.last_login = datetime.utcnow()
+        db.commit()
+        db.refresh(user)
+        return user
+
     def get_user_by_id(db : Session, user_id: int) -> Optional[User]:
         return db.query(User).filter(User.id == user_id).first()
 

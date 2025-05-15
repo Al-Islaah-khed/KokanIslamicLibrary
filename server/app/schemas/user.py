@@ -2,28 +2,38 @@ from pydantic import BaseModel, EmailStr,Field,ConfigDict
 from typing import List, Optional,Literal
 from .permission import PermissionRead
 from .role import Role
+from enums.AuthProvider import AuthProvider
+from datetime import datetime
 
 
 # normal users schema
 class UserBase(BaseModel):
-    fullname: str = Field(..., min_length=3,max_length=100)
-    email: EmailStr = Field(..., min_length=5,max_length=100)
+    fullname: str = Field(..., min_length=3, max_length=100)
+    email: EmailStr = Field(..., min_length=5, max_length=100)
     is_admin: bool = False
     is_active: bool = True
+    profile_image: Optional[str] = None
+    phone_no: Optional[str] = None
+    auth_provider: AuthProvider
+    provider_id: Optional[str] = None
 
 class User(UserBase):
-    id : int
-    roles : Optional[List[Role]] = []
+    id: int
+    roles: Optional[List[Role]] = []
+    last_login: Optional[datetime] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
     model_config = ConfigDict(from_attributes=True)
 
 class UserCreate(UserBase):
-    password: str = Field(..., min_length=8, description="User password")
+    pass
 
 class UserUpdate(BaseModel):
     fullname: Optional[str] = Field(None, max_length=100)
-    password: Optional[str] = Field(None, min_length=8, description="New password (leave blank to keep current)")
     is_active: Optional[bool] = None
+    profile_image: Optional[str] = None
+    phone_no: Optional[str] = None
 
 class UserLoginResponse(BaseModel):
     token: str
@@ -33,12 +43,17 @@ class UserLoginResponse(BaseModel):
 class AdminBase(BaseModel):
     fullname: str = Field(..., min_length=3,max_length=100)
     email: EmailStr = Field(..., min_length=5,max_length=100)
+    auth_provider: Literal[AuthProvider.LOCAL] = AuthProvider.LOCAL
+    provider_id: Optional[str] = None
     is_admin: bool = False
     is_active: bool = True
 
 class Admin(AdminBase):
     id : int
     roles : Optional[List[Role]] = []
+    last_login: Optional[datetime] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
     model_config = ConfigDict(from_attributes=True)
 

@@ -74,6 +74,8 @@ def login_admin(db:Session,user : UserSchema.AdminLogin) -> UserSchema.AdminLogi
 
         data = UserModel_to_AdminSchema(found_user)
 
+        UserRepo.update_last_login(db=db,user=found_user)
+
         token = generate_token(data=data.model_dump(),expires_delta=token_expires)
         logger.info(f"User '{found_user.email}' logged in successfully")
         return UserSchema.AdminLoginResponse(token=token,user=data)
