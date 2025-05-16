@@ -43,10 +43,9 @@ class UserLoginResponse(BaseModel):
 class AdminBase(BaseModel):
     fullname: str = Field(..., min_length=3,max_length=100)
     email: EmailStr = Field(..., min_length=5,max_length=100)
-    auth_provider: Literal[AuthProvider.LOCAL] = AuthProvider.LOCAL
-    provider_id: Optional[str] = None
     is_admin: bool = False
     is_active: bool = True
+    # does not contains auth provider because for admin it will be always local and in model the default value of the auth provider is set to the lcoal
 
 class Admin(AdminBase):
     id : int

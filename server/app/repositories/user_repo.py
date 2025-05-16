@@ -48,7 +48,7 @@ class UserRepo():
             email=user.email,
             password=user.password,
             is_admin=user.is_admin,
-            is_active=True
+            is_active=True,
             )
         db.add(new_user)
         db.commit()
