@@ -8,6 +8,7 @@ import schemas.user as UserSchema
 from datetime import timedelta
 from helpers.logger import logger
 from helpers.converters import UserModel_to_AdminSchema
+import traceback
 
 from config import Settings
 
@@ -46,6 +47,8 @@ def register_admin(db: Session, user: UserSchema.AdminCreate) -> UserSchema.Admi
         raise
     except Exception as e:
         logger.error(f"Unexpected error during admin registeration: {str(e)}")
+        logger.error(traceback.format_exc())
+
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An unexpected error occurred while registering the admin"
@@ -76,13 +79,15 @@ def login_admin(db:Session,user : UserSchema.AdminLogin) -> UserSchema.AdminLogi
 
         UserRepo.update_last_login(db=db,user=found_user)
 
-        token = generate_token(data=data.model_dump(),expires_delta=token_expires)
+        token = generate_token(data=data.model_dump(mode="json"),expires_delta=token_expires)
         logger.info(f"User '{found_user.email}' logged in successfully")
         return UserSchema.AdminLoginResponse(token=token,user=data)
     except HTTPException:
         raise
     except Exception as e:
+        print(e)
         logger.error(f"Unexpected error during admin login: {str(e)}")
+        logger.error(traceback.format_exc())
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An unexpected error occurred while logging in the admin"

@@ -4,6 +4,7 @@ from repositories.auditlog_repo import AuditLogRepo
 from fastapi import  HTTPException,status
 from helpers.converters import AuditLogModel_to_Schema
 from helpers.logger import logger
+import traceback
 
 def create_log(
         db: Session,
@@ -29,6 +30,8 @@ def create_log(
 
     except Exception as e:
         logger.error(f"Error occurred while creating audit log by user {action_by}: {str(e)}")
+        logger.error(traceback.format_exc())
+
         raise HTTPException(
             status=status.HTTP_400_BAD_REQUEST,
             details=f"Error occured while creating auditlog"
@@ -46,6 +49,8 @@ def get_all_auditlogs(db: Session):
         raise
     except Exception as e:
         logger.error(f"Unexpected error occurred while fetching all audit logs: {str(e)}")
+        logger.error(traceback.format_exc())
+
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An unexpected error occurred while fetching all auditlogs"
@@ -68,6 +73,8 @@ def get_specific_auditlog(db:Session,log_id : int):
         raise
     except Exception as e:
         logger.error(f"Unexpected error occurred while fetching audit log ID {log_id}: {str(e)}")
+        logger.error(traceback.format_exc())
+
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An unexpected error occurred while fetching specific auditlog"
@@ -83,6 +90,8 @@ def get_specific_admin_auditlog(db:Session,user_id: int):
         raise
     except Exception as e:
         logger.error(f"Unexpected error while fetching audit logs for admin user {user_id}: {str(e)}")
+        logger.error(traceback.format_exc())
+
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An unexpected error occurred while fetching specific admin auditlogs"

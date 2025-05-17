@@ -9,6 +9,7 @@ import schemas.user as UserSchema
 from helpers.logger import logger
 from helpers.converters import UserModel_to_Schema,UserModel_to_AdminSchema
 from enums.Roles import Roles
+import traceback
 
 # restrict loggedin users
 async def restrict_authenticated_users(token: str = Depends(is_token_available)):
@@ -39,6 +40,8 @@ async def get_current_user(
     email = payload.get("email")
     if not email:
         logger.error("Token does not contain email")
+        logger.error(traceback.format_exc())
+
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Token missing email information"

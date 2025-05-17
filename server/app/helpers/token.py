@@ -4,6 +4,7 @@ from fastapi.security import APIKeyHeader
 from jose import JWTError, jwt,ExpiredSignatureError
 from config import get_settings
 from helpers.logger import logger
+import traceback
 
 # Setup
 settings = get_settings()
@@ -35,6 +36,8 @@ def is_token_available(authorization: str = Depends(authorization_header)):
 def get_token(token: str | None = Depends(is_token_available)):
     if not token:
         logger.error("Token not found in request")
+        logger.error(traceback.format_exc())
+
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Authorization header missing or invalid format"
@@ -61,6 +64,8 @@ def verify_token(token: str = Depends(get_token)):
         )
     except Exception as e:
         logger.error(f"Unexpected error during token verification: {e}")
+        logger.error(traceback.format_exc())
+
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Token verification failed"

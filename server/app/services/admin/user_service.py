@@ -11,6 +11,7 @@ from helpers.password_hash import get_password_hash
 from helpers.converters import UserModel_to_AdminSchema
 from schemas.response import APIResponse
 from typing import List
+import traceback
 
 # CRUD of admin users
 def create_admin(db: Session, user: UserSchema.AdminCreate,create_auditlog):
@@ -39,6 +40,8 @@ def create_admin(db: Session, user: UserSchema.AdminCreate,create_auditlog):
         raise  # Let FastAPI handle it
     except Exception as e:
         logger.error(f"Unexpected error during admin creation: {str(e)}")
+        logger.error(traceback.format_exc())
+
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An unexpected error occurred while creating the admin"
@@ -88,6 +91,8 @@ def delete_admin(db: Session, user_id: int,create_auditlog,current_admin : UserS
         raise
     except Exception as e:
         logger.error(f"Unexpected error during admin deletion: {str(e)}")
+        logger.error(traceback.format_exc())
+
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An unexpected error occurred while deleting the admin"

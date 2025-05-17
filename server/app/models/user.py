@@ -4,7 +4,6 @@ from db.database import Base
 from sqlalchemy import Enum as SqlEnum
 from enums.AuthProvider import AuthProvider
 
-
 user_roles = Table(
     "user_roles",
     Base.metadata,
@@ -26,7 +25,7 @@ class User(Base):
 
     profile_image = Column(String(255),nullable=True)
     phone_no = Column(String(15),nullable=True)
-    auth_provider = Column(SqlEnum(AuthProvider),nullable=False,default=AuthProvider.LOCAL)
+    auth_provider = Column(SqlEnum(AuthProvider),nullable=True,default=AuthProvider.LOCAL)
     provider_id = Column(String(255),nullable=True)
 
     # timing details
