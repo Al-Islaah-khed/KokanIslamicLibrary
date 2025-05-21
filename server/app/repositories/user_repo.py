@@ -28,6 +28,19 @@ class UserRepo():
         return result > 0
 
     # only non admin users repository methods
+    def create_nonadmin_user(db:Session , user : UserSchema.UserCreate) -> User:
+        new_user = User(
+            fullname = user.fullname,
+            email=user.email,
+            profile_image=user.profile_image,
+            auth_provider = user.auth_provider,
+            provider_id = user.provider_id
+        )
+        db.add(new_user)
+        db.commit()
+        db.refresh(new_user)
+        return new_user
+
     def get_all_nonadmin_users(db:Session)-> List[User]:
         return db.query(User).filter(User.is_admin == False).all()
 

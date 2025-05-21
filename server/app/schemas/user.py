@@ -13,7 +13,6 @@ class UserBase(BaseModel):
     is_admin: bool = False
     is_active: bool = True
     profile_image: Optional[str] = None
-    phone_no: Optional[str] = None
     auth_provider: AuthProvider
     provider_id: Optional[str] = None
 
@@ -33,7 +32,6 @@ class UserUpdate(BaseModel):
     fullname: Optional[str] = Field(None, max_length=100)
     is_active: Optional[bool] = None
     profile_image: Optional[str] = None
-    phone_no: Optional[str] = None
 
 class UserLoginResponse(BaseModel):
     token: str
@@ -77,3 +75,10 @@ class GetAllAdminRouteResponse(BaseModel):
 class AdminLoginResponse(BaseModel):
     token: str
     user: Admin
+
+# Google Login and Facebook login schemas
+class GoogleAuthRequest(BaseModel):
+    id_token: str
+
+class FacebookAuthRequest(BaseModel):
+    access_token: str

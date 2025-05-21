@@ -24,7 +24,6 @@ class User(Base):
     # details only provided by the google or facebook
 
     profile_image = Column(String(255),nullable=True)
-    phone_no = Column(String(15),nullable=True)
     auth_provider = Column(SqlEnum(AuthProvider),nullable=True,default=AuthProvider.LOCAL)
     provider_id = Column(String(255),nullable=True)
 

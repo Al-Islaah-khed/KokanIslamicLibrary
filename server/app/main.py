@@ -2,6 +2,7 @@ from fastapi import FastAPI,HTTPException,Request
 from routes.admin.auth_routes import router as AdminAuthRouter
 from routes.admin.user_routes import router as AdminUserRouter
 from routes.admin.auditlog_routes import router as AuditLogRouter
+from routes.user_auth_routes import router as UserAuthRouter
 from fastapi.middleware.cors import CORSMiddleware
 from config import Settings
 from fastapi.responses import JSONResponse
@@ -42,3 +43,6 @@ def validation_exception(request : Request, err):
 app.include_router(AdminAuthRouter)
 app.include_router(AdminUserRouter)
 app.include_router(AuditLogRouter)
+
+# user routes
+app.include_router(UserAuthRouter)
