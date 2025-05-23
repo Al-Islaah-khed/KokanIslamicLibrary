@@ -12,9 +12,9 @@ class UserBase(BaseModel):
     email: EmailStr = Field(..., min_length=5, max_length=100)
     is_admin: bool = False
     is_active: bool = True
-    profile_image: Optional[str] = None
+    profile_image: str = None
     auth_provider: AuthProvider
-    provider_id: Optional[str] = None
+    provider_id: str = None
 
 class User(UserBase):
     id: int

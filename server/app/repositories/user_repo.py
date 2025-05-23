@@ -7,23 +7,35 @@ from datetime import datetime
 class UserRepo():
 
     # user and admin both can find by these methods
+    def get_all_users(db : Session,is_admin: bool | None = None) -> List[User]:
+        if is_admin is None:
+            return db.query(User).all()
+        else:
+            return db.query(User).filter(User.is_admin==is_admin).all()
+
+    def get_user_by_id(db : Session, user_id: int,is_admin: bool | None = None) -> Optional[User]:
+        if is_admin is None:
+            return db.query(User).filter(User.id == user_id).first()
+        else:
+            return db.query(User).filter(User.id == user_id,User.is_admin==is_admin).first()
+
     def update_last_login(db : Session,user : User) -> User:
         user.last_login = datetime.utcnow()
         db.commit()
         db.refresh(user)
         return user
 
-    def get_user_by_id(db : Session, user_id: int) -> Optional[User]:
-        return db.query(User).filter(User.id == user_id).first()
+    def get_user_by_email(db : Session, email: str,is_admin : bool | None = None) -> Optional[User]:
+        if is_admin is None:
+            return db.query(User).filter(User.email == email).first()
+        else:
+            return db.query(User).filter(User.email == email,User.is_admin==is_admin).first()
 
-    def get_all_users(db : Session) -> List[User]:
-        return db.query(User).all()
-
-    def get_user_by_email(db : Session, email: str) -> Optional[User]:
-        return db.query(User).filter(User.email == email).first()
-
-    def delete_user(db:Session,user_id : int) -> bool:
-        result = db.query(User).filter(User.id == user_id).delete()
+    def delete_user(db:Session,user_id : int,is_admin: bool | None = None) -> bool:
+        if is_admin is None:
+            result = db.query(User).filter(User.id == user_id).delete()
+        else:
+            result = db.query(User).filter(User.id == user_id,User.is_admin==is_admin).delete()
         db.commit()
         return result > 0
 
@@ -41,20 +53,7 @@ class UserRepo():
         db.refresh(new_user)
         return new_user
 
-    def get_all_nonadmin_users(db:Session)-> List[User]:
-        return db.query(User).filter(User.is_admin == False).all()
-
-
     # only admin users repository methods
-    def get_admin_user_by_id(db: Session,user_id : int)-> Optional[User]:
-        return db.query(User).filter(User.id == user_id,User.is_admin == True).first()
-
-    def get_admin_user_by_email(db : Session, email: str) -> Optional[User]:
-            return db.query(User).filter(User.email == email,User.is_admin == True).first()
-
-    def get_all_admin_users(db:Session) -> List[User]:
-        return db.query(User).filter(User.is_admin == True).all()
-
     def create_admin_user(db : Session, user: UserSchema.AdminCreate ) -> User:
         new_user = User(
             fullname=user.fullname,
@@ -69,7 +68,6 @@ class UserRepo():
         return new_user
 
     def update_admin_user(db: Session, user_id:int, user_data: UserSchema.AdminUpdate) -> User:
-
         update_data = {}
 
         if user_data.fullname is not None:

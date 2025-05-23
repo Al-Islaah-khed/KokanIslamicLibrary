@@ -16,7 +16,7 @@ settings = Settings()
 
 # Authenticate user
 def authenticate_admin_user(db: Session, email: str, password: str) -> UserSchema.Admin:
-    admin = UserRepo.get_admin_user_by_email(db=db, email=email)
+    admin = UserRepo.get_user_by_email(db=db, email=email,is_admin=True)
     if not admin:
         logger.warning(f"Authentication failed: admin with email '{email}' not found")
         return None
@@ -30,7 +30,7 @@ def authenticate_admin_user(db: Session, email: str, password: str) -> UserSchem
 def register_admin(db: Session, user: UserSchema.AdminCreate) -> UserSchema.Admin:
     try:
         # if any user exists with the email either it is admin or non admin it's account cannot be created
-        existing_user = UserRepo.get_user_by_email(db, user.email)
+        existing_user = UserRepo.get_user_by_email(db, user.email,is_admin=True)
         if existing_user:
             logger.warning(f"Admin registeration failed: email '{user.email}' already registered")
             raise HTTPException(

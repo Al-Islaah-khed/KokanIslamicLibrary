@@ -7,7 +7,7 @@ from db.database import get_db
 import dependencies.auditlog_dep as AuditLogDependency
 from enums.Roles import Roles
 import schemas.user as UserSchema
-from typing import List
+from typing import List,Union
 from schemas.response import APIResponse
 
 router = APIRouter(prefix="/admin/users",
@@ -28,22 +28,26 @@ async def create_new_admin(
 ):
     return AdminUserService.create_admin(db=db,user=user,create_auditlog=create_auditlog)
 
-@router.get("/",response_model = List[UserSchema.Admin])
-async def get_all_admin_users(
-    db : Session = Depends(get_db)
+@router.get("/",response_model = List[Union[UserSchema.Admin, UserSchema.User]])
+async def get_all_users(
+    db : Session = Depends(get_db),
+    is_admin: bool | None = None
 ):
-    return AdminUserService.get_all_admins(
+    return AdminUserService.get_all_users(
         db=db,
+        is_admin=is_admin
     )
 
-@router.get("/{user_id}",response_model=UserSchema.Admin)
-async def get_specific_admin(
+@router.get("/{user_id}",response_model=UserSchema.Admin | UserSchema.User)
+async def get_specific_user(
     user_id : int,
     db:Session = Depends(get_db),
+    is_admin: bool | None = None
 ):
-    return AdminUserService.get_specific_admin(
+    return AdminUserService.get_specific_user(
         db=db,
         user_id=user_id,
+        is_admin=is_admin
     )
 
 @router.put("/{user_id}",response_model=UserSchema.Admin)

@@ -14,11 +14,11 @@ from helpers.converters import UserModel_to_Schema
 
 settings = Settings()
 
-def login_by_google(data: UserSchema.GoogleAuthRequest, db: Session):
+def login_by_google(data: UserSchema.GoogleAuthRequest, db: Session) -> UserSchema.User:
     try:
         logger.info("Starting Google login flow")
 
-        # Step 1: Verify Google ID token
+        # Verify Google ID token
         try:
             idinfo = id_token.verify_oauth2_token(
                 data.id_token, GoogleRequest.Request(), settings.GOOGLE_CLIENT_ID
@@ -28,7 +28,7 @@ def login_by_google(data: UserSchema.GoogleAuthRequest, db: Session):
             logger.warning(f"Invalid Google ID token: {str(ve)}")
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid Google ID token")
 
-        # Step 2: Extract required info
+        # Extract required info
         email = idinfo.get('email')
         fullname = idinfo.get('name')
         profile_image = idinfo.get('picture')  # Correct key is 'picture'
@@ -43,7 +43,7 @@ def login_by_google(data: UserSchema.GoogleAuthRequest, db: Session):
                 detail="Missing required user information from Google"
             )
 
-        # Step 3: Check if user exists
+        # Check if user exists either it is admin or non admin account will not be created if exists.
         found_user = UserRepo.get_user_by_email(db=db, email=email)
 
         if found_user and found_user.is_admin:
@@ -76,10 +76,10 @@ def login_by_google(data: UserSchema.GoogleAuthRequest, db: Session):
         token = generate_token(data=user_data.model_dump(mode="json"), expires_delta=token_expires)
         logger.info(f"User '{email}' logged in successfully using Google login")
 
-        return UserSchema.AdminLoginResponse(token=token, user=user_data)
+        return UserSchema.UserLoginResponse(token=token, user=user_data)
 
-    except HTTPException as http_exc:
-        raise http_exc
+    except HTTPException:
+        raise
 
     except Exception as e:
         logger.error(f"Unexpected error during Google login for user. Error: {str(e)}")

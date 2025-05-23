@@ -54,4 +54,4 @@ class User(Base):
     reviewed_uploads = relationship("BookUploadRequest", back_populates="reviewer", foreign_keys="[BookUploadRequest.reviewed_by]")
 
     def __repr__(self):
-        return f"<User id={self.id} email={self.email} provider={self.auth_provider}>"
+        return f"<User id={self.id} fullname={self.fullname} email={self.email} provider={self.auth_provider} is_admin={self.is_admin}>"

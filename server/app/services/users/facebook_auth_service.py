@@ -2,17 +2,17 @@ import requests
 from fastapi import HTTPException, status
 from config import Settings
 from sqlalchemy.orm import Session
-from schemas.user import FacebookAuthRequest, AdminLoginResponse, UserCreate
 from helpers.token import generate_token
 from datetime import timedelta
 from enums.AuthProvider import AuthProvider
 from repositories.user_repo import UserRepo
 from helpers.converters import UserModel_to_Schema
 from helpers.logger import logger
+import schemas.user as UserSchema
 
 settings = Settings()
 
-def login_by_facebook(data: FacebookAuthRequest, db: Session):
+def login_by_facebook(data: UserSchema.FacebookAuthRequest, db: Session) -> UserSchema.User:
     try:
         logger.info("Verifying Facebook access token")
         fb_url = f"https://graph.facebook.com/me?fields=id,name,email,picture&access_token={data.access_token}"
@@ -35,7 +35,7 @@ def login_by_facebook(data: FacebookAuthRequest, db: Session):
             raise HTTPException(status_code=403, detail="Admin cannot login via Facebook")
 
         if not found_user:
-            user = UserCreate(
+            user = UserSchema.UserCreate(
                 fullname=fullname,
                 email=email,
                 profile_image=profile_image,
@@ -54,7 +54,7 @@ def login_by_facebook(data: FacebookAuthRequest, db: Session):
         )
 
         logger.info(f"Facebook login successful for user {email}")
-        return AdminLoginResponse(token=token, user=UserModel_to_Schema(found_user))
+        return UserSchema.UserLoginResponse(token=token, user=UserModel_to_Schema(found_user))
 
     except Exception as e:
         logger.error(f"Facebook login error: {str(e)}")
