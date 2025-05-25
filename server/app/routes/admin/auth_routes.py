@@ -5,7 +5,7 @@ from dependencies.auth_dep import restrict_authenticated_users,get_admin
 from db.database import get_db
 from schemas.user import Admin,AdminCreate,AdminLogin,AdminLoginResponse
 
-router = APIRouter(prefix="/admin/auth",tags=["Admin"])
+router = APIRouter(prefix="/admin/auth",tags=["Admin - Auth"])
 
 @router.post("/register",
             response_model=Admin,

@@ -7,11 +7,11 @@ from db.database import get_db
 import dependencies.auditlog_dep as AuditLogDependency
 from enums.Roles import Roles
 import schemas.user as UserSchema
-from typing import List,Union
+from typing import List,Union,Optional
 from schemas.response import APIResponse
 
 router = APIRouter(prefix="/admin/users",
-    tags=["Admin"],
+    tags=["Admin - User"],
     dependencies=[Depends(AuthDependency.allow_roles_to_admin(
         [Roles.SUPER_ADMIN,Roles.STAFF_ADMIN]
     )
@@ -31,7 +31,7 @@ async def create_new_admin(
 @router.get("/",response_model = List[Union[UserSchema.Admin, UserSchema.User]])
 async def get_all_users(
     db : Session = Depends(get_db),
-    is_admin: bool | None = None
+    is_admin: Optional[bool] = None
 ):
     return AdminUserService.get_all_users(
         db=db,
@@ -42,7 +42,7 @@ async def get_all_users(
 async def get_specific_user(
     user_id : int,
     db:Session = Depends(get_db),
-    is_admin: bool | None = None
+    is_admin: Optional[bool] = None
 ):
     return AdminUserService.get_specific_user(
         db=db,

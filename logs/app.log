@@ -2389,3 +2389,5 @@ WHERE %(param_1)s = user_roles.user_id AND roles.id = user_roles.role_id
 2025-05-23 21:50:37 - INFO - uvicorn.error - on.py:67 - Waiting for application shutdown.
 2025-05-23 21:50:37 - INFO - uvicorn.error - on.py:76 - Application shutdown complete.
 2025-05-23 21:50:37 - INFO - uvicorn.error - server.py:93 - Finished server process [13044]
+2025-05-23 21:52:32 - INFO - watchfiles.main - main.py:308 - 1 change detected
+2025-05-23 21:52:32 - WARNING - uvicorn.error - basereload.py:55 - WatchFiles detected changes in 'app\routes\user_auth_routes.py'. Reloading...

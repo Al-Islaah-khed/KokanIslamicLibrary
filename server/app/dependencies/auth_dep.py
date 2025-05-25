@@ -88,27 +88,27 @@ async def get_admin(
 ) -> UserSchema.Admin:
     if not active_user.is_admin:
         logger.warning(f"Non-admin user '{active_user.email}' tried to access admin route")
-        raise HTTPException(status_code=403, detail="Not an admin")
+        raise HTTPException(status_code=403, detail="Access denied because user is not an admin")
     logger.info(f"Admin access granted to user '{active_user.email}'")
     return active_user
 
 
 # check user is not an admin
-async def get_normal_user(
+async def get_nonadmin_user(
     active_user: UserSchema.User = Depends(get_current_active_user)
 ):
     if active_user.is_admin:
-        logger.warning(f"Admin user '{active_user.email}' tried to access normal user route")
-        raise HTTPException(status_code=403,detail="Access denied")
-    logger.info(f"Normal user access granted to '{active_user.email}'")
+        logger.warning(f"Admin user '{active_user.email}' tried to access non admin user route")
+        raise HTTPException(status_code=403,detail="Access denied because user is admin")
+    logger.info(f"Non admin user access granted to '{active_user.email}'")
     return active_user
 
-# authenticate normal user role
-def allow_roles(allowed_roles: List[Roles]):
-    def role_checker(user: UserSchema.User = Depends(get_normal_user)):
+# authenticate non admin user role
+def allow_roles_to_user(allowed_roles: List[Roles]):
+    def role_checker(user: UserSchema.User = Depends(get_nonadmin_user)):
         user_roles = [Roles(role.name) for role in user.roles]
 
-        if not any(role in allowed_roles for role in user_roles):
+        if allowed_roles and not any(role in allowed_roles for role in user_roles):
             logger.warning(f"User '{user.email}' denied access due to insufficient roles")
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access denied")
         logger.info(f"User '{user.email}' granted access with role(s): {[role.name for role in user.roles]}")

@@ -9,7 +9,7 @@ from enums.Roles import Roles
 
 router = APIRouter(
     prefix="/admin/auditlog",
-    tags=["Admin"],
+    tags=["Admin - Auditlog"],
     dependencies=[
         Depends(AuthDependency.allow_roles_to_admin([Roles.SUPER_ADMIN,Roles.AUDITOR]))
     ]
