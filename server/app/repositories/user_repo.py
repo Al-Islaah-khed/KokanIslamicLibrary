@@ -53,6 +53,22 @@ class UserRepo():
         db.refresh(new_user)
         return new_user
 
+    def update_nonadmin_user(db: Session, user_id:int, user_data: UserSchema.UserUpdate) -> User:
+        update_data = {}
+
+        if user_data.fullname is not None:
+            update_data['fullname'] = user_data.fullname
+        if user_data.profile_image is not None:
+            update_data['profile_image'] = user_data.profile_image
+        if user_data.is_active is not None:
+            update_data['is_active'] = user_data.is_active
+
+        db.query(User).filter(User.id == user_id).update(update_data)
+        db.commit()
+
+        updated_user = db.query(User).filter(User.id == user_id).first()
+        return updated_user
+
     # only admin users repository methods
     def create_admin_user(db : Session, user: UserSchema.AdminCreate ) -> User:
         new_user = User(

@@ -7,7 +7,7 @@ from routes.nonadmin_user_routes import router as NonAdminUserRouter
 from fastapi.middleware.cors import CORSMiddleware
 from config import Settings
 from fastapi.responses import JSONResponse
-
+from fastapi.staticfiles import StaticFiles
 
 import models
 
@@ -26,6 +26,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.mount("/public",StaticFiles(directory="public"),name="public")
 
 # exception handling
 @app.exception_handler(HTTPException)
