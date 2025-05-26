@@ -21,7 +21,7 @@ server/dist/
 server/.vscode/
 server/alembic/versions/__pycache__/
 server/alembic/versions/*.pyc
-
+server/app/public/uploads/
 # Node (React or Next.js frontend) in client/
 client/node_modules/
 client/.next/

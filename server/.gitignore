@@ -1,5 +1,7 @@
 # Byte-compiled / compiled files
 
+app/public/uploads
+
 __pycache__/
 *.py[cod]
 *.pyo
