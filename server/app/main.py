@@ -11,7 +11,32 @@ from fastapi.staticfiles import StaticFiles
 
 import models
 
-app = FastAPI(title="Library Management System")
+app = FastAPI(
+    title="Library Management System",
+    description="A application which focuses on library management system and more...",
+    openapi_tags=[
+        {
+            "name": "Admin - Auth",
+            "description":"Manages the admin authentication"
+        },
+        {
+            "name": "Admin - User",
+            "description":"Manages the operations related to the users by the admin, either it is admin user or non admin user, role management as well"
+        },
+        {
+            "name": "Admin - Auditlog",
+            "description":"Gives Info about the admin logs auditlogs"
+        },
+        {
+            "name": "User - Auth",
+            "description":"Manages the non admin user's authentication with google login, facebook login and verification"
+        },
+        {
+            "name": "User",
+            "description":"Manages non admin user related operations like profile update or profile info etc."
+        }
+    ]
+    )
 
 settings = Settings()
 
